@@ -164,6 +164,12 @@ _GAME_FK = ForeignKey("game", ("game_id",))
 _PLAYER_FK = ForeignKey("player_info", ("player_id",))
 _GAME_PLAYER_KEYS = ("game_id", "player_id", "team_id")
 
+_SKATER_NUMERIC = (
+    "timeOnIce", "goals", "assists", "shots", "hits", "penaltyMinutes", "plusMinus",
+    "powerPlayGoals", "powerPlayAssists", "faceOffWins", "faceoffTaken", "takeaways", "giveaways",
+)
+_GOALIE_NUMERIC = ("timeOnIce", "shots", "saves")
+
 SILVER_TABLES: tuple[SilverTableConfig, ...] = (
     SilverTableConfig(
         name="team_info",
@@ -209,6 +215,7 @@ SILVER_TABLES: tuple[SilverTableConfig, ...] = (
         ),
         primary_keys=("game_id",),
         timestamp_cols=("date_time_GMT",),
+        cast_types={"home_goals": "int", "away_goals": "int"},
         foreign_keys=(
             ForeignKey("team_info", ("home_team_id", "team_id")),
             ForeignKey("team_info", ("away_team_id", "team_id")),
@@ -290,6 +297,7 @@ SILVER_TABLES: tuple[SilverTableConfig, ...] = (
             "faceOffWins",
             "faceoffTaken",
         ),
+        cast_types={col: "int" for col in _SKATER_NUMERIC},
         foreign_keys=(_GAME_FK, _TEAM_FK, _PLAYER_FK),
     ),
     SilverTableConfig(
@@ -305,6 +313,7 @@ SILVER_TABLES: tuple[SilverTableConfig, ...] = (
         ),
         primary_keys=_GAME_PLAYER_KEYS,
         no_null_cols=("game_id", "player_id", "team_id", "timeOnIce", "shots", "saves"),
+        cast_types={col: "int" for col in _GOALIE_NUMERIC},
         foreign_keys=(_GAME_FK, _TEAM_FK, _PLAYER_FK),
     ),
 )
