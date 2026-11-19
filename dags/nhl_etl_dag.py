@@ -110,7 +110,7 @@ with DAG(
     schedule=None,  # the Kaggle dataset is static; trigger manually (or set a cron here)
     catchup=False,
     max_active_runs=1,
-    max_active_tasks=3,  # cap parallel Spark JVMs inside the single Docker container
+    max_active_tasks=2,  # cap parallel Spark JVMs inside the single Docker container
     default_args={
         "owner": "data-eng",
         "retries": 1,
