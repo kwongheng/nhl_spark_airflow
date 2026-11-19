@@ -139,6 +139,9 @@ class SilverTableConfig:
     fill_null: dict[str, str] = field(default_factory=dict)
     date_cols: tuple[str, ...] = ()  # cast to DATE
     timestamp_cols: tuple[str, ...] = ()  # cast to TIMESTAMP
+    # column -> Spark type. Uses TRY_CAST, so non-numeric text such as 'NA' becomes null
+    # instead of failing (or leaving the whole column as a string).
+    cast_types: dict[str, str] = field(default_factory=dict)
     allowed_values: dict[str, tuple[str, ...]] = field(default_factory=dict)
     foreign_keys: tuple[ForeignKey, ...] = ()
     validators: tuple[str, ...] = ()  # names registered in silver.VALIDATORS
@@ -233,6 +236,18 @@ SILVER_TABLES: tuple[SilverTableConfig, ...] = (
         ),
         primary_keys=("game_id", "team_id"),
         no_null_cols=("game_id", "team_id", "HoA", "won", "settled_in"),
+        cast_types={
+            "goals": "int",
+            "shots": "int",
+            "hits": "int",
+            "pim": "int",
+            "powerPlayOpportunities": "int",
+            "powerPlayGoals": "int",
+            "faceOffWinPercentage": "double",
+            "giveaways": "int",
+            "takeaways": "int",
+            "blocked": "int",
+        },
         allowed_values={
             "HoA": ("home", "away"),
             "settled_in": ("REG", "tbc", "OT"),

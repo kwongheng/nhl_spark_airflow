@@ -3,7 +3,7 @@
 One generic runner applies the same steps to every table, driven by
 ``config.SilverTableConfig``:
 
-  read new bronze rows -> keep latest per key -> fill nulls -> cast dates/timestamps
+  read new bronze rows -> keep latest per key -> fill nulls -> cast dates/timestamps/numbers
   -> drop foreign-key orphans -> quality checks (stop the load on failure)
   -> upsert (SCD Type 1)
 """
@@ -82,6 +82,8 @@ def run_silver(spark: SparkSession, cfg: SilverTableConfig) -> dict:
         df = df.withColumn(col, F.to_date(F.col(col)))
     for col in cfg.timestamp_cols:
         df = df.withColumn(col, F.to_timestamp(F.col(col)))
+    for col, spark_type in cfg.cast_types.items():
+        df = df.withColumn(col, F.expr(f"try_cast(`{col}` AS {spark_type})"))
 
     # referential integrity against already-cleaned silver tables (orphans are dropped)
     for fk in cfg.foreign_keys:
