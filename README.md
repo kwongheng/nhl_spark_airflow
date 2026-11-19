@@ -112,16 +112,17 @@ Install these once on Windows 11:
 
 1. **Docker Desktop** using the WSL 2 backend (Settings → General → "Use the WSL 2 based engine").
 2. **Astro CLI** (`winget install -e --id Astronomer.Astro`). Check it with `astro version`.
-3. A **Kaggle account** and API key (Kaggle → Settings → API).
+3. A **Kaggle account** and API key (Not needed for this project).
 4. **Memory for Docker.** Spark and Airflow together are heavy. Give Docker at least 6 GB, ideally 8 GB, in `%UserProfile%\.wslconfig`:
 
    ```ini
    [wsl2]
    memory=8GB
-   processors=4
+   processors=6
    ```
 
    Then run `wsl --shutdown` and restart Docker Desktop.
+5. **Performance optimization** Based on CPU, you need to adjust `max_active_tasks` in DAG properties accordingly to avoid hanging dockers. So for CPU of 6, set ` max_active_tasks=2`. As the rule of thumb is `max_active_tasks × Spark threads ≤ CPUs given to Docker − 2` and `NHL_SPARK_MASTER=local[2]` is default. If you want to increase `max_active_tasks` then you need to reduce `NHL_SPARK_MASTER=local[1]` in .env.
 
 ---
 
