@@ -2,4 +2,3 @@
 kagglehub
 pyspark
 delta-spark
-apache-airflow-providers-apache-spark
